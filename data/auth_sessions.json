@@ -1,0 +1,20 @@
+{
+  "6d246f446c83128133a2dffcb20beaa36dd7f3468e7d56b9695fc7a80eb31fe8ee254879": {
+    "user_email": "hamza.elalami@taqa.ma",
+    "created_at": "2025-05-31T17:14:57.177976",
+    "expires_at": "2025-06-01T01:14:57.177976",
+    "last_activity": "2025-05-31T17:18:52.069279",
+    "ip_address": null,
+    "user_agent": null,
+    "is_active": true
+  },
+  "842322e411ac3ea06333156767fb6ae7ca091f1321d89db185ab3dfc09aa0fc3c172f254": {
+    "user_email": "hamza@taqa.ma",
+    "created_at": "2025-05-31T17:22:11.016675",
+    "expires_at": "2025-06-01T01:22:11.016675",
+    "last_activity": "2025-05-31T17:23:39.520839",
+    "ip_address": null,
+    "user_agent": null,
+    "is_active": true
+  }
+}

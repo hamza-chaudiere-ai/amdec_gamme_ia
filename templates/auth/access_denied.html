@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accès Refusé - AMDEC & Gamme IA</title>
+    
+    <!-- CSS Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- CSS Personnalisé -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/auth.css') }}" rel="stylesheet">
+</head>
+<body class="auth-body">
+    <div class="auth-container">
+        <div class="auth-card">
+            <!-- En-tête -->
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <img src="{{ url_for('static', filename='images/logo_taqa.png') }}" 
+                         alt="TAQA Morocco" class="logo-img">
+                </div>
+                <h1 class="auth-title text-danger">
+                    <i class="fas fa-shield-alt me-2"></i>Accès Restreint
+                </h1>
+                <p class="auth-subtitle">Cette application est réservée aux collaborateurs TAQA Morocco</p>
+            </div>
+
+            <!-- Message d'erreur principal -->
+            <div class="text-center mb-4">
+                <div class="mb-4">
+                    <i class="fas fa-times-circle fa-5x text-danger mb-3"></i>
+                    <h3 class="text-danger">Accès Non Autorisé</h3>
+                </div>
+
+                <!-- Raison du refus -->
+                <div class="alert alert-danger border-0">
+                    <h5 class="alert-heading">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        {% if reason %}{{ reason }}{% else %}Domaine Email Non Autorisé{% endif %}
+                    </h5>
+                    <hr>
+                    <p class="mb-0">
+                        Seuls les emails professionnels <strong>@taqa.ma</strong> sont autorisés à accéder 
+                        à cette application de maintenance industrielle.
+                    </p>
+                </div>
+
+                {% if attempted_email %}
+                <div class="alert alert-warning border-0">
+                    <p class="mb-1"><strong>Email tenté :</strong></p>
+                    <code class="fs-6">{{ attempted_email }}</code>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Instructions pour l'accès -->
+            <div class="access-instructions">
+                <h5><i class="fas fa-info-circle me-2 text-primary"></i>Comment Accéder à l'Application ?</h5>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="instruction-card">
+                            <div class="instruction-icon">
+                                <i class="fas fa-building fa-2x text-primary"></i>
+                            </div>
+                            <h6>Collaborateurs TAQA</h6>
+                            <p class="small">
+                                Utilisez votre adresse email professionnelle 
+                                <strong>@taqa.ma</strong> pour vous connecter.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="instruction-card">
+                            <div class="instruction-icon">
+                                <i class="fas fa-user-plus fa-2x text-success"></i>
+                            </div>
+                            <h6>Nouveau Collaborateur</h6>
+                            <p class="small">
+                                Contactez votre service IT pour obtenir 
+                                votre accès à l'application.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h6><i class="fas fa-question-circle me-2"></i>Exemples d'Emails Autorisés</h6>
+                    <ul class="list-unstyled mb-0">
+                        <li><i class="fas fa-check text-success me-2"></i><code>prenom.nom@taqa.ma</code></li>
+                        <li><i class="fas fa-check text-success me-2"></i><code>p.nom@taqa.ma</code></li>
+                        <li><i class="fas fa-check text-success me-2"></i><code>service.technique@taqa.ma</code></li>
+                    </ul>
+                </div>
+
+                <div class="mt-3 p-3 bg-danger bg-opacity-10 rounded border border-danger">
+                    <h6 class="text-danger"><i class="fas fa-times me-2"></i>Emails Non Autorisés</h6>
+                    <ul class="list-unstyled mb-0 small">
+                        <li><i class="fas fa-times text-danger me-2"></i>Emails personnels (Gmail, Yahoo, Hotmail, etc.)</li>
+                        <li><i class="fas fa-times text-danger me-2"></i>Emails d'autres entreprises</li>
+                        <li><i class="fas fa-times text-danger me-2"></i>Emails de test ou temporaires</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="text-center mt-4">
+                <a href="{{ url_for('auth_login') }}" class="btn btn-primary btn-lg me-3">
+                    <i class="fas fa-sign-in-alt me-2"></i>Réessayer avec Email TAQA
+                </a>
+                
+                <a href="mailto:support.ia@taqa.ma?subject=Demande d'accès AMDEC & Gamme IA" 
+                   class="btn btn-outline-info btn-lg">
+                    <i class="fas fa-envelope me-2"></i>Contacter le Support
+                </a>
+            </div>
+
+            <!-- Informations de contact -->
+            <div class="mt-4 p-3 bg-info bg-opacity-10 rounded border border-info">
+                <h6 class="text-info"><i class="fas fa-headset me-2"></i>Support Technique</h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <small>
+                            <strong>Email :</strong><br>
+                            <a href="mailto:support.ia@taqa.ma">support.ia@taqa.ma</a>
+                        </small>
+                    </div>
+                    <div class="col-md-6">
+                        <small>
+                            <strong>Disponibilité :</strong><br>
+                            Lun-Ven, 8h00-17h00
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="auth-footer">
+            <div class="container text-center">
+                <small class="text-muted">
+                    © 2024 TAQA Morocco - Assistant IA de Maintenance Industrielle<br>
+                    Application Réservée aux Collaborateurs Autorisés
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Styles supplémentaires -->
+    <style>
+        .instruction-card {
+            text-align: center;
+            padding: 1rem;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+        }
+        
+        .instruction-icon {
+            margin-bottom: 0.5rem;
+        }
+        
+        .access-instructions {
+            margin-top: 2rem;
+        }
+        
+        .auth-card {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        code {
+            background: #f8f9fa;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+    </style>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Vérifier si on a des paramètres d'URL
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const email = urlParams.get('email');
+            const reason = urlParams.get('reason');
+            
+            if (email) {
+                console.log('Email tenté:', email);
+            }
+            
+            if (reason) {
+                console.log('Raison du refus:', reason);
+            }
+        });
+        
+        // Animation d'entrée
+        document.querySelector('.auth-card').style.animationDelay = '0.2s';
+    </script>
+</body>
+</html>

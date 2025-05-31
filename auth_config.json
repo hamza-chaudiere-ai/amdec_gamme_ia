@@ -1,0 +1,15 @@
+{
+  "allowed_domains": [
+    "taqa.ma"
+  ],
+  "session_duration_hours": 8,
+  "max_login_attempts": 3,
+  "verification_code_length": 6,
+  "verification_timeout_minutes": 15,
+  "smtp_server": "smtp.office365.com",
+  "smtp_port": 587,
+  "smtp_username": "",
+  "smtp_password": "",
+  "app_name": "AMDEC & Gamme IA",
+  "company_name": "TAQA Morocco"
+}

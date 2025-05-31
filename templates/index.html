@@ -1,0 +1,422 @@
+{% extends "base.html" %}
+
+{% block title %}Accueil - AMDEC & Gamme IA{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-4 fw-bold text-primary mb-3">
+                <i class="fas fa-brain me-3"></i>
+                AMDEC & Gamme IA
+            </h1>
+            <p class="lead text-muted mb-4">
+                Plateforme intelligente de génération automatique d'analyses AMDEC et de gammes de maintenance 
+                à partir d'historiques d'arrêts industriels et de datasets d'entraînement.
+            </p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                <a href="{{ url_for('amdec_page') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-chart-line me-2"></i>Générer AMDEC
+                </a>
+                <a href="{{ url_for('gamme_page') }}" class="btn btn-success btn-lg">
+                    <i class="fas fa-tools me-2"></i>Créer Gamme
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Statistiques du Système</h2>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-chart-line fa-3x text-primary"></i>
+                    </div>
+                    <h3 class="card-title display-6 fw-bold text-primary">{{ stats.amdec_generated|default(0) }}</h3>
+                    <p class="card-text text-muted">AMDEC Générées</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-tools fa-3x text-success"></i>
+                    </div>
+                    <h3 class="card-title display-6 fw-bold text-success">{{ stats.gammes_generated|default(0) }}</h3>
+                    <p class="card-text text-muted">Gammes Créées</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-database fa-3x text-info"></i>
+                    </div>
+                    <h3 class="card-title display-6 fw-bold text-info">{{ stats.datasets_available|default(2) }}</h3>
+                    <p class="card-text text-muted">Datasets Disponibles</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-cogs fa-3x text-warning"></i>
+                    </div>
+                    <h3 class="card-title display-6 fw-bold text-warning">{{ stats.components_supported|default(6) }}</h3>
+                    <p class="card-text text-muted">Composants Supportés</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fonctionnalités Principales -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="text-center mb-5">Fonctionnalités Principales</h2>
+        </div>
+        
+        <!-- Génération AMDEC -->
+        <div class="col-lg-4 mb-4">
+            <div class="card feature-card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-file-excel fa-3x text-primary"></i>
+                    </div>
+                    <h4 class="card-title text-primary">Génération AMDEC</h4>
+                    <p class="card-text mb-4">
+                        Transformez vos fichiers Excel d'historique d'arrêts en analyses AMDEC structurées 
+                        avec calculs automatiques de criticité (F×G×D).
+                    </p>
+                    <div class="feature-list mb-4">
+                        <div class="feature-item">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <span>À partir d'historique Excel</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <span>À partir de datasets IA</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <span>Export Excel formaté</span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('amdec_page') }}" class="btn btn-primary w-100">
+                        <i class="fas fa-chart-line me-2"></i>Commencer
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gammes de Maintenance -->
+        <div class="col-lg-4 mb-4">
+            <div class="card feature-card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-tools fa-3x text-success"></i>
+                    </div>
+                    <h4 class="card-title text-success">Gammes de Maintenance</h4>
+                    <p class="card-text mb-4">
+                        Générez automatiquement des gammes de maintenance détaillées avec opérations, 
+                        matériels nécessaires et consignes de sécurité.
+                    </p>
+                    <div class="feature-list mb-4">
+                        <div class="feature-item">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <span>Basées sur criticité AMDEC</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <span>Images techniques intégrées</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <span>Export Word professionnel</span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('gamme_page') }}" class="btn btn-success w-100">
+                        <i class="fas fa-tools me-2"></i>Créer Gamme
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Intelligence Artificielle -->
+        <div class="col-lg-4 mb-4">
+            <div class="card feature-card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-brain fa-3x text-info"></i>
+                    </div>
+                    <h4 class="card-title text-info">Intelligence Artificielle</h4>
+                    <p class="card-text mb-4">
+                        Modèles ML entraînés sur des datasets d'expertise pour améliorer continuellement 
+                        la qualité des prédictions et recommandations.
+                    </p>
+                    <div class="feature-list mb-4">
+                        <div class="feature-item">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <span>Prédiction de criticité</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <span>Recommandations intelligentes</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <span>Apprentissage continu</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-info w-100" onclick="trainModels()">
+                        <i class="fas fa-brain me-2"></i>Entraîner Modèles
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Composants Supportés -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Composants de Chaudière Supportés</h2>
+        </div>
+        <div class="col-lg-8 mx-auto">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="card component-card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">
+                                <i class="fas fa-fire me-2"></i>Économiseurs
+                            </h5>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-chevron-right me-2 text-muted"></i>Économiseur BT</li>
+                                <li><i class="fas fa-chevron-right me-2 text-muted"></i>Économiseur HT</li>
+                                <li class="text-muted small">• Collecteurs, Épingles, Tubes suspension</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card component-card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-danger">
+                                <i class="fas fa-thermometer-full me-2"></i>Surchauffeurs
+                            </h5>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-chevron-right me-2 text-muted"></i>Surchauffeur BT</li>
+                                <li><i class="fas fa-chevron-right me-2 text-muted"></i>Surchauffeur HT</li>
+                                <li class="text-muted small">• Tubes porteurs, Branches, Collecteurs</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card component-card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-warning">
+                                <i class="fas fa-temperature-high me-2"></i>Réchauffeurs
+                            </h5>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-chevron-right me-2 text-muted"></i>Réchauffeur BT</li>
+                                <li><i class="fas fa-chevron-right me-2 text-muted"></i>Réchauffeur HT</li>
+                                <li class="text-muted small">• Collecteurs, Tubes, Branches</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card component-card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-info">
+                                <i class="fas fa-plus me-2"></i>Extensible
+                            </h5>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-chevron-right me-2 text-muted"></i>Architecture modulaire</li>
+                                <li><i class="fas fa-chevron-right me-2 text-muted"></i>Ajout de composants</li>
+                                <li class="text-muted small">• Facilement personnalisable</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workflow -->
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Workflow de Travail</h2>
+        </div>
+        <div class="col-lg-10 mx-auto">
+            <div class="workflow-container">
+                <div class="workflow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h5>Upload Historique</h5>
+                        <p>Importez vos fichiers Excel d'historique d'arrêts</p>
+                    </div>
+                </div>
+                <div class="workflow-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h5>Analyse IA</h5>
+                        <p>Traitement automatique et calcul de criticité</p>
+                    </div>
+                </div>
+                <div class="workflow-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h5>Génération AMDEC</h5>
+                        <p>Export Excel formaté et professionnel</p>
+                    </div>
+                </div>
+                <div class="workflow-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h5>Gammes Maintenance</h5>
+                        <p>Création automatique des procédures</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal d'entraînement -->
+<div class="modal fade" id="trainingModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-brain me-2"></i>Entraînement des Modèles IA
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Type de modèle à entraîner :</label>
+                    <select class="form-select" id="trainingType">
+                        <option value="both">Tous les modèles</option>
+                        <option value="amdec">Modèles AMDEC seulement</option>
+                        <option value="gamme">Modèles Gammes seulement</option>
+                    </select>
+                </div>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    L'entraînement utilise les datasets disponibles pour améliorer les prédictions.
+                </div>
+                <div id="trainingProgress" style="display: none;">
+                    <div class="progress mb-2">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <small class="text-muted">Entraînement en cours...</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" onclick="startTraining()">
+                    <i class="fas fa-play me-2"></i>Démarrer l'Entraînement
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function trainModels() {
+    $('#trainingModal').modal('show');
+}
+
+function startTraining() {
+    const trainingType = document.getElementById('trainingType').value;
+    const progressDiv = document.getElementById('trainingProgress');
+    const progressBar = progressDiv.querySelector('.progress-bar');
+    
+    // Afficher la progression
+    progressDiv.style.display = 'block';
+    
+    // Animation de la barre de progression
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += Math.random() * 10;
+        if (progress > 90) progress = 90;
+        progressBar.style.width = progress + '%';
+    }, 500);
+    
+    // Appel API
+    fetch('/api/train_models', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            model_type: trainingType
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        clearInterval(interval);
+        progressBar.style.width = '100%';
+        
+        setTimeout(() => {
+            $('#trainingModal').modal('hide');
+            if (data.success) {
+                showNotification('Modèles entraînés avec succès !', 'success');
+            } else {
+                showNotification('Erreur lors de l\'entraînement : ' + data.error, 'error');
+            }
+        }, 1000);
+    })
+    .catch(error => {
+        clearInterval(interval);
+        console.error('Erreur:', error);
+        $('#trainingModal').modal('hide');
+        showNotification('Erreur lors de l\'entraînement', 'error');
+    });
+}
+
+function showNotification(message, type) {
+    const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+    const icon = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-triangle';
+    
+    const notification = `
+        <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+            <i class="${icon} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    const container = document.querySelector('.container');
+    container.insertAdjacentHTML('afterbegin', notification);
+    
+    // Auto-dismiss après 5 secondes
+    setTimeout(() => {
+        const alert = container.querySelector('.alert');
+        if (alert) {
+            alert.remove();
+        }
+    }, 5000);
+}
+</script>
+{% endblock %}

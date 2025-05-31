@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - AMDEC & Gamme IA</title>
+    
+    <!-- CSS Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- CSS Personnalisé -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/auth.css') }}" rel="stylesheet">
+</head>
+<body class="auth-body">
+    <!-- Overlay de chargement -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-content">
+            <div class="spinner-border text-primary mb-3" role="status">
+                <span class="visually-hidden">Chargement...</span>
+            </div>
+            <p id="loadingMessage">Traitement en cours...</p>
+        </div>
+    </div>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <!-- En-tête avec logo TAQA -->
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <img src="{{ url_for('static', filename='images/logo_taqa.png') }}" 
+                         alt="TAQA Morocco" class="logo-img">
+                </div>
+                <h1 class="auth-title">
+                    <i class="fas fa-brain me-2"></i>AMDEC & Gamme IA
+                </h1>
+                <p class="auth-subtitle">Assistant Intelligent de Maintenance Industrielle</p>
+            </div>
+
+            <!-- Alerte de sécurité -->
+            <div class="alert alert-info border-0 shadow-sm mb-4">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-shield-alt fa-2x text-primary me-3"></i>
+                    <div>
+                        <h6 class="alert-heading mb-1">Accès Sécurisé Collaborateurs TAQA</h6>
+                        <small class="mb-0">
+                            Seuls les emails professionnels @taqa.ma sont autorisés.
+                            Un code de vérification sera envoyé pour confirmer votre identité.
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulaire de connexion -->
+            <div class="auth-form-container">
+                <!-- Étape 1: Saisie email -->
+                <div id="email-step" class="auth-step">
+                    <form id="email-form" class="auth-form">
+                        <div class="form-group mb-4">
+                            <label for="email" class="form-label fw-bold">
+                                <i class="fas fa-envelope me-2"></i>Email Professionnel TAQA
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <input type="email" 
+                                       class="form-control form-control-lg" 
+                                       id="email" 
+                                       name="email"
+                                       placeholder="prenom.nom@taqa.ma"
+                                       required
+                                       autocomplete="email">
+                            </div>
+                            <div class="form-text text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Utilisez votre adresse email professionnelle TAQA Morocco
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100 mb-3" id="send-code-btn">
+                            <i class="fas fa-paper-plane me-2"></i>
+                            Envoyer le Code de Vérification
+                        </button>
+                        
+                        <div class="text-center">
+                            <small class="text-muted">
+                                Première connexion ? Un code sera automatiquement généré et envoyé.
+                            </small>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Étape 2: Vérification du code -->
+                <div id="verification-step" class="auth-step" style="display: none;">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-envelope-open-text fa-3x text-success mb-3"></i>
+                        <h5>Code de Vérification Envoyé</h5>
+                        <p class="text-muted">
+                            Un code à 6 chiffres a été envoyé à<br>
+                            <strong id="sent-email"></strong>
+                        </p>
+                    </div>
+
+                    <form id="verification-form" class="auth-form">
+                        <div class="form-group mb-4">
+                            <label for="verification-code" class="form-label fw-bold">
+                                <i class="fas fa-key me-2"></i>Code de Vérification
+                            </label>
+                            <div class="verification-input-container">
+                                <input type="text" 
+                                       class="form-control form-control-lg text-center verification-input" 
+                                       id="verification-code"
+                                       name="verification_code"
+                                       placeholder="000000"
+                                       maxlength="6"
+                                       pattern="[0-9]{6}"
+                                       required
+                                       autocomplete="one-time-code">
+                            </div>
+                            <div class="form-text text-muted">
+                                <i class="fas fa-clock me-1"></i>
+                                Le code expire dans <span id="countdown">15:00</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-lg w-100 mb-3" id="verify-btn">
+                            <i class="fas fa-check-circle me-2"></i>
+                            Vérifier et Se Connecter
+                        </button>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-outline-secondary" id="back-btn">
+                                <i class="fas fa-arrow-left me-2"></i>Retour
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" id="resend-btn">
+                                <i class="fas fa-redo me-2"></i>Renvoyer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Messages d'erreur/succès -->
+                <div id="message-container" class="mt-3"></div>
+            </div>
+
+            <!-- Instructions d'utilisation -->
+            <div class="auth-instructions">
+                <h6><i class="fas fa-question-circle me-2"></i>Première fois ?</h6>
+                <ul class="list-unstyled small">
+                    <li><i class="fas fa-check text-success me-2"></i>Saisissez votre email @taqa.ma</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Recevez un code par email</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Entrez le code pour accéder</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Votre session reste active 8 heures</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="auth-footer">
+            <div class="container text-center">
+                <small class="text-muted">
+                    © 2024 TAQA Morocco - AMDEC & Gamme IA | 
+                    <a href="mailto:support.ia@taqa.ma" class="text-decoration-none">Support Technique</a>
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+
+    <script>
+        // Initialiser l'interface de connexion
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔐 Interface de connexion TAQA initialisée');
+            
+            // Vérifier si on a des paramètres URL (redirection après logout)
+            const urlParams = new URLSearchParams(window.location.search);
+            const logout = urlParams.get('logout');
+            const error = urlParams.get('error');
+            
+            if (logout === 'success') {
+                showMessage('Vous avez été déconnecté avec succès', 'success');
+            }
+            
+            if (error) {
+                showMessage(decodeURIComponent(error), 'error');
+            }
+            
+            // Auto-focus sur le champ email
+            document.getElementById('email').focus();
+        });
+    </script>
+</body>
+</html>

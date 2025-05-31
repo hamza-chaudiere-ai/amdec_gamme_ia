@@ -1,0 +1,59 @@
+# Core Flask
+Flask==2.3.3
+Werkzeug==2.3.7
+
+# Data Processing
+pandas==2.0.3
+numpy==1.24.3
+openpyxl==3.1.2
+
+# Machine Learning
+scikit-learn==1.3.0
+xgboost==1.7.6
+joblib==1.3.2
+
+# Document Generation
+python-docx==0.8.11
+Pillow==10.0.0
+
+# Web Interface
+requests==2.31.0
+
+# Utilities
+colorama==0.4.6
+tqdm==4.66.1
+
+# 🆕 Nouvelles dépendances RAG
+chromadb==0.4.22
+langchain==0.1.5
+langchain-community==0.0.20
+sentence-transformers==2.2.2
+groq==0.4.1
+pypdf2==3.0.1
+python-magic==0.4.27
+beautifulsoup4==4.12.2
+markdown==3.5.2
+tiktoken==0.5.2
+
+# Utilitaires supplémentaires
+python-dateutil==2.8.2
+pytz==2023.3
+
+# ✅ Production et sécurité
+# Serveur WSGI pour production
+gunicorn==21.2.0
+
+# Variables d'environnement
+python-dotenv==1.0.0
+
+# Rate limiting pour sécurité
+Flask-Limiter==3.5.0
+
+# Logging avancé
+loguru==0.7.2
+
+# Validation et sérialisation
+marshmallow==3.20.1
+
+# Cache pour performances
+Flask-Caching==2.1.0

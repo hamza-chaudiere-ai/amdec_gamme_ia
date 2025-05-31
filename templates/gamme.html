@@ -1,0 +1,454 @@
+{% extends "base.html" %}
+
+{% block title %}Gammes de Maintenance - AMDEC & Gamme IA{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- En-tête de la page -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-gradient-success text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="mb-0">
+                                <i class="fas fa-tools me-2"></i>Gammes de Maintenance
+                            </h2>
+                            <small>Génération automatique de procédures personnalisées</small>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-light text-dark fs-6">
+                                <i class="fas fa-magic me-1"></i>IA + Images
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ Section de sélection des composants -->
+    <div class="selection-section">
+        <h4 class="mb-4">
+            <i class="fas fa-cogs me-2 text-primary"></i>
+            Sélection du Composant
+        </h4>
+        
+        <div class="component-selection">
+            <!-- Sélection composant -->
+            <div class="input-group">
+                <label for="component-select" class="form-label">
+                    <i class="fas fa-industry me-2"></i>Composant Principal
+                </label>
+                <select class="form-select" id="component-select">
+                    <option value="">Sélectionnez un composant...</option>
+                    {% for component in components %}
+                    <option value="{{ component.id }}">{{ component.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Sélection sous-composant -->
+            <div class="input-group" id="subcomponent-group" style="display: none;">
+                <label for="subcomponent-select" class="form-label">
+                    <i class="fas fa-cog me-2"></i>Sous-composant
+                </label>
+                <select class="form-select" id="subcomponent-select">
+                    <option value="">Sélectionnez un sous-composant...</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- ✅ Aperçu du composant sélectionné -->
+        <div id="component-preview" class="mt-4" style="display: none;">
+            <div class="card border-info">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Aperçu du Composant
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row" id="component-preview-content">
+                        <!-- Contenu injecté par JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ Section criticité enrichie -->
+    <div id="criticality-info" class="criticality-info" style="display: none;">
+        <div class="criticality-card">
+            <div id="criticality-value" class="criticality-value">--</div>
+            <div id="criticality-label" class="criticality-label">Niveau de Criticité</div>
+            <div id="criticality-description" class="criticality-description">
+                Sélectionnez un composant pour voir sa criticité
+            </div>
+            
+            <!-- ✅ Bouton de génération enrichi -->
+            <div class="mt-4">
+                <button id="generate-maintenance-btn" 
+                        class="btn btn-success btn-lg pulse" 
+                        disabled
+                        data-criticality=""
+                        data-component=""
+                        data-subcomponent="">
+                    <i class="fas fa-magic me-2"></i>
+                    Générer Gamme de Maintenance
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ Section des résultats de gamme -->
+    <div id="maintenance-results" class="maintenance-results" style="display: none;">
+        <div class="results-header">
+            <h3><i class="fas fa-check-circle text-success me-2"></i>Gamme de Maintenance Générée !</h3>
+            <p class="lead">Votre procédure personnalisée est prête</p>
+        </div>
+
+        <div id="maintenance-preview" class="maintenance-preview">
+            <!-- Le contenu sera injecté par JavaScript -->
+        </div>
+
+        <div class="maintenance-actions">
+            <button id="download-maintenance" class="btn btn-success btn-lg">
+                <i class="fas fa-download me-2"></i>Télécharger Gamme Word
+            </button>
+            <button type="button" class="btn btn-outline-primary btn-lg" onclick="previewMaintenance()">
+                <i class="fas fa-eye me-2"></i>Aperçu Détaillé
+            </button>
+            <button type="button" class="btn btn-outline-info btn-lg" onclick="generateRelatedGamemmes()">
+                <i class="fas fa-plus me-2"></i>Gammes Similaires
+            </button>
+            <button type="button" class="btn btn-outline-secondary btn-lg" onclick="resetGamemmeSelection()">
+                <i class="fas fa-redo me-2"></i>Nouvelle Sélection
+            </button>
+        </div>
+    </div>
+
+    <!-- ✅ Section workflow explicatif -->
+    <div class="mt-5">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">
+                    <i class="fas fa-route me-2 text-info"></i>
+                    Comment fonctionne la Génération de Gamme ?
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="workflow-container">
+                    <div class="workflow-step fade-in">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h5>Analyse IA</h5>
+                            <p>Calcul automatique de la criticité selon l'expertise industrielle</p>
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    
+                    <div class="workflow-step slide-in-left">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h5>Sélection Opérations</h5>
+                            <p>Choix intelligent des opérations selon la criticité et le composant</p>
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    
+                    <div class="workflow-step slide-in-right">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h5>Matériels & Images</h5>
+                            <p>Association automatique des outils et images techniques</p>
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    
+                    <div class="workflow-step fade-in">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h5>Document Word</h5>
+                            <p>Export professionnel avec formatage et images intégrées</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ Section statistiques et aide -->
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-database fa-2x text-primary"></i>
+                </div>
+                <h5>17 Gammes</h5>
+                <p class="text-muted">Types de maintenance différents dans notre base de connaissances</p>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-tools fa-2x text-success"></i>
+                </div>
+                <h5>50+ Opérations</h5>
+                <p class="text-muted">Opérations de maintenance standardisées et optimisées</p>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-images fa-2x text-warning"></i>
+                </div>
+                <h5>100+ Images</h5>
+                <p class="text-muted">Images techniques d'appareils et procédures intégrées</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ✅ JavaScript spécifique à la page Gamme -->
+<script>
+// Fonctions spécifiques à la page gamme
+function generateRelatedGamemmes() {
+    const component = document.getElementById('component-select').value;
+    
+    if (!component) {
+        Utils.showNotification('Sélectionnez d\'abord un composant', 'warning');
+        return;
+    }
+    
+    // Générer les gammes pour tous les sous-composants du composant
+    const subcomponentSelect = document.getElementById('subcomponent-select');
+    const subcomponents = Array.from(subcomponentSelect.options)
+        .filter(option => option.value !== '')
+        .map(option => option.value);
+    
+    if (subcomponents.length === 0) {
+        Utils.showNotification('Aucun sous-composant disponible', 'warning');
+        return;
+    }
+    
+    Utils.setLoading(true, 'Génération des gammes similaires...');
+    
+    // Générer pour chaque sous-composant
+    const promises = subcomponents.map(subcomp => {
+        return Utils.apiRequest('/api/generate_gamme', {
+            method: 'POST',
+            body: JSON.stringify({
+                component: component,
+                subcomponent: subcomp,
+                criticality: null // Laisse l'IA calculer
+            })
+        });
+    });
+    
+    Promise.allSettled(promises)
+        .then(results => {
+            Utils.setLoading(false);
+            
+            const successful = results.filter(r => r.status === 'fulfilled');
+            const failed = results.filter(r => r.status === 'rejected');
+            
+            if (successful.length > 0) {
+                Utils.showNotification(
+                    `${successful.length} gammes similaires générées ! ${failed.length} échecs.`,
+                    'success'
+                );
+                
+                // Afficher les liens de téléchargement
+                const downloadLinks = successful.map(result => {
+                    const data = result.value;
+                    return `<a href="/download/${data.filename}" class="btn btn-sm btn-outline-success me-2 mb-2">
+                        <i class="fas fa-download me-1"></i>${data.filename}
+                    </a>`;
+                }).join('');
+                
+                if (downloadLinks) {
+                    const alertHtml = `
+                        <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-check-circle me-2"></i>Gammes Similaires Générées
+                            </h6>
+                            <p class="mb-2">Les gammes pour tous les sous-composants ont été générées :</p>
+                            <div>${downloadLinks}</div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    `;
+                    
+                    document.querySelector('#maintenance-results').insertAdjacentHTML('beforeend', alertHtml);
+                }
+            } else {
+                Utils.showNotification('Erreur lors de la génération des gammes similaires', 'error');
+            }
+        })
+        .catch(error => {
+            Utils.setLoading(false);
+            Utils.showNotification('Erreur: ' + error.message, 'error');
+        });
+}
+
+function resetGamemmeSelection() {
+    // Réinitialiser les sélections
+    document.getElementById('component-select').value = '';
+    document.getElementById('subcomponent-select').innerHTML = '<option value="">Sélectionnez un sous-composant...</option>';
+    
+    // Masquer les sections
+    document.getElementById('subcomponent-group').style.display = 'none';
+    document.getElementById('component-preview').style.display = 'none';
+    document.getElementById('criticality-info').style.display = 'none';
+    document.getElementById('maintenance-results').style.display = 'none';
+    
+    // Désactiver le bouton
+    document.getElementById('generate-maintenance-btn').disabled = true;
+    
+    Utils.showNotification('Sélection réinitialisée', 'info', 3000);
+}
+
+function showComponentPreview(component, subcomponents) {
+    const previewDiv = document.getElementById('component-preview');
+    const contentDiv = document.getElementById('component-preview-content');
+    
+    const componentLabels = {
+        'economiseur_bt': 'Économiseur Basse Température',
+        'economiseur_ht': 'Économiseur Haute Température',
+        'surchauffeur_bt': 'Surchauffeur Basse Température', 
+        'surchauffeur_ht': 'Surchauffeur Haute Température',
+        'rechauffeur_bt': 'Réchauffeur Basse Température',
+        'rechauffeur_ht': 'Réchauffeur Haute Température'
+    };
+    
+    const componentDescriptions = {
+        'economiseur_bt': 'Pré-chauffage de l\'eau d\'alimentation par récupération de chaleur des fumées',
+        'economiseur_ht': 'Réchauffage haute température de l\'eau avant vaporisation',
+        'surchauffeur_bt': 'Surchauffe primaire de la vapeur saturée',
+        'surchauffeur_ht': 'Surchauffe finale pour atteindre la température de service',
+        'rechauffeur_bt': 'Réchauffage intermédiaire de la vapeur partiellement détendue',
+        'rechauffeur_ht': 'Réchauffage final avant retour en turbine'
+    };
+    
+    const componentImages = {
+        'economiseur_bt': '/static/images/image_eco_bt/eco_bt.png',
+        'economiseur_ht': '/static/images/image_eco_ht/eco_ht.png',
+        'surchauffeur_bt': '/static/images/image_sur_bt/sur_bt.png',
+        'surchauffeur_ht': '/static/images/image_sur_ht/sur_ht.png',
+        'rechauffeur_bt': '/static/images/image_rch_bt/rch_bt.png',
+        'rechauffeur_ht': '/static/images/image_rch_ht/rch_ht.png'
+    };
+    
+    contentDiv.innerHTML = `
+        <div class="col-md-4">
+            <img src="${componentImages[component] || '/static/images/image_chaudiere/chaudiere_schema.png'}" 
+                 alt="${componentLabels[component]}" 
+                 class="img-fluid rounded border"
+                 style="max-height: 200px; object-fit: contain;">
+        </div>
+        <div class="col-md-8">
+            <h6 class="text-primary">${componentLabels[component]}</h6>
+            <p class="text-muted mb-3">${componentDescriptions[component]}</p>
+            
+            <div class="row">
+                <div class="col-6">
+                    <strong>Sous-composants :</strong><br>
+                    <small class="text-muted">${subcomponents.length} éléments disponibles</small>
+                </div>
+                <div class="col-6">
+                    <strong>Types de maintenance :</strong><br>
+                    <small class="text-muted">Préventive, conditionnelle, corrective</small>
+                </div>
+            </div>
+            
+            <div class="mt-2">
+                <small class="text-info">
+                    <i class="fas fa-lightbulb me-1"></i>
+                    Sélectionnez un sous-composant pour voir la criticité calculée par l'IA
+                </small>
+            </div>
+        </div>
+    `;
+    
+    previewDiv.style.display = 'block';
+}
+
+// Amélioration de la gestion des changements de composant
+document.addEventListener('DOMContentLoaded', function() {
+    const componentSelect = document.getElementById('component-select');
+    const subcomponentSelect = document.getElementById('subcomponent-select');
+    
+    if (componentSelect) {
+        componentSelect.addEventListener('change', function() {
+            const component = this.value;
+            const subcomponentGroup = document.getElementById('subcomponent-group');
+            
+            if (!component) {
+                subcomponentGroup.style.display = 'none';
+                document.getElementById('component-preview').style.display = 'none';
+                return;
+            }
+            
+            // Afficher le groupe sous-composant
+            subcomponentGroup.style.display = 'block';
+            
+            // Charger les sous-composants via l'API ou définition locale
+            const subcomponentOptions = {
+                'economiseur_bt': [
+                    {id: 'epingle', name: 'Épingle'},
+                    {id: 'collecteur_sortie', name: 'Collecteur sortie'}
+                ],
+                'economiseur_ht': [
+                    {id: 'collecteur_entree', name: 'Collecteur entrée'},
+                    {id: 'tubes_suspension', name: 'Tubes suspension'}
+                ],
+                'surchauffeur_bt': [
+                    {id: 'epingle', name: 'Épingle'},
+                    {id: 'collecteur_entree', name: 'Collecteur entrée'}
+                ],
+                'surchauffeur_ht': [
+                    {id: 'tube_porteur', name: 'Tube porteur'},
+                    {id: 'branches_entree', name: 'Branches entrée'},
+                    {id: 'collecteur_sortie', name: 'Collecteur sortie'}
+                ],
+                'rechauffeur_bt': [
+                    {id: 'collecteur_entree', name: 'Collecteur entrée'},
+                    {id: 'tubes_suspension', name: 'Tubes suspension'},
+                    {id: 'tube_porteur', name: 'Tube porteur'}
+                ],
+                'rechauffeur_ht': [
+                    {id: 'branches_sortie', name: 'Branches sortie'},
+                    {id: 'collecteur_entree', name: 'Collecteur entrée'},
+                    {id: 'collecteur_sortie', name: 'Collecteur sortie'}
+                ]
+            };
+            
+            // Remplir la liste des sous-composants
+            subcomponentSelect.innerHTML = '<option value="">Sélectionnez un sous-composant...</option>';
+            const options = subcomponentOptions[component] || [];
+            
+            options.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option.id;
+                optionElement.textContent = option.name;
+                subcomponentSelect.appendChild(optionElement);
+            });
+            
+            // Afficher l'aperçu du composant
+            showComponentPreview(component, options);
+        });
+    }
+});
+</script>
+{% endblock %}
+                    '

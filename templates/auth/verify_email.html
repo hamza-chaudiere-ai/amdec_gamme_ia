@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vérification Email - AMDEC & Gamme IA</title>
+    
+    <!-- CSS Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- CSS Personnalisé -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/auth.css') }}" rel="stylesheet">
+</head>
+<body class="auth-body">
+    <div class="auth-container">
+        <div class="auth-card">
+            <!-- En-tête -->
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <img src="{{ url_for('static', filename='images/logo_taqa.png') }}" 
+                         alt="TAQA Morocco" class="logo-img">
+                </div>
+                <h1 class="auth-title">
+                    <i class="fas fa-envelope-open-text me-2"></i>Vérification Email
+                </h1>
+                <p class="auth-subtitle">Confirmez votre adresse email TAQA</p>
+            </div>
+
+            <!-- Instructions de vérification -->
+            <div class="text-center mb-4">
+                <div class="mb-4">
+                    <i class="fas fa-paper-plane fa-4x text-primary mb-3"></i>
+                    <h4>Email de Vérification Envoyé</h4>
+                    <p class="text-muted">
+                        Un email de vérification a été envoyé à<br>
+                        <strong>{{ email or 'votre adresse email' }}</strong>
+                    </p>
+                </div>
+
+                <div class="alert alert-info border-0">
+                    <h6 class="alert-heading">
+                        <i class="fas fa-info-circle me-2"></i>Étapes Suivantes
+                    </h6>
+                    <ol class="text-start mb-0">
+                        <li>Vérifiez votre boîte email (et le dossier spam)</li>
+                        <li>Cliquez sur le lien dans l'email reçu</li>
+                        <li>Ou utilisez le code de 6 chiffres ci-dessous</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Formulaire de saisie du code -->
+            <div class="verification-form-container">
+                <form id="manual-verification-form">
+                    <div class="form-group mb-4">
+                        <label for="verification-code" class="form-label fw-bold">
+                            <i class="fas fa-key me-2"></i>Code de Vérification (Optionnel)
+                        </label>
+                        <input type="text" 
+                               class="form-control form-control-lg text-center verification-input" 
+                               id="verification-code"
+                               placeholder="000000"
+                               maxlength="6"
+                               pattern="[0-9]{6}">
+                        <div class="form-text">
+                            <i class="fas fa-clock me-1"></i>
+                            Le code expire dans <strong>15 minutes</strong>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-lg w-100 mb-3">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Vérifier le Code
+                    </button>
+                </form>
+            </div>
+
+            <!-- Actions alternatives -->
+            <div class="d-flex justify-content-between mt-4">
+                <button type="button" class="btn btn-outline-primary" onclick="resendEmail()">
+                    <i class="fas fa-redo me-2"></i>Renvoyer l'Email
+                </button>
+                <a href="{{ url_for('auth_login') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Retour à la Connexion
+                </a>
+            </div>
+
+            <!-- Informations de contact -->
+            <div class="mt-4 p-3 bg-light rounded">
+                <h6><i class="fas fa-question-circle me-2"></i>Problème de Réception ?</h6>
+                <ul class="list-unstyled small mb-0">
+                    <li><i class="fas fa-check text-success me-2"></i>Vérifiez le dossier spam/courrier indésirable</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Assurez-vous d'utiliser votre email @taqa.ma</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Contactez <a href="mailto:support.ia@taqa.ma">support.ia@taqa.ma</a> si nécessaire</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="auth-footer">
+            <div class="container text-center">
+                <small class="text-muted">
+                    © 2024 TAQA Morocco - Assistant IA de Maintenance | 
+                    <a href="mailto:support.ia@taqa.ma" class="text-decoration-none">Support Technique</a>
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Gestion de la vérification manuelle
+        document.getElementById('manual-verification-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const code = document.getElementById('verification-code').value.trim();
+            
+            if (!/^\d{6}$/.test(code)) {
+                alert('Veuillez saisir un code à 6 chiffres valide');
+                return;
+            }
+            
+            // Rediriger vers la page de connexion avec le code
+            const params = new URLSearchParams();
+            params.set('email', '{{ email or "" }}');
+            params.set('code', code);
+            
+            window.location.href = `/auth/login?${params.toString()}`;
+        });
+
+        // Formatage automatique du code
+        document.getElementById('verification-code').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 6) {
+                value = value.slice(0, 6);
+            }
+            e.target.value = value;
+        });
+
+        // Fonction de renvoi d'email
+        function resendEmail() {
+            const email = '{{ email or "" }}';
+            if (!email) {
+                window.location.href = '{{ url_for("auth_login") }}';
+                return;
+            }
+            
+            // Appel API pour renvoyer le code
+            fetch('/api/auth/send_code', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: email })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Nouvel email de vérification envoyé !');
+                } else {
+                    alert('Erreur: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Erreur lors du renvoi de l\'email');
+            });
+        }
+
+        // Auto-focus sur le champ de code
+        document.getElementById('verification-code').focus();
+    </script>
+</body>
+</html>
